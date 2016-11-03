@@ -6,6 +6,7 @@ const test = require('ava'),
     q = require('q'),
     fs = require('fs'),
     tmp = require('tmp'),
+    _ = require('lodash'),
     
     packageJson = require('../package'),
     pathToSassjsLoader = path.join(__dirname, '..', packageJson.main),
@@ -14,18 +15,37 @@ const test = require('ava'),
 test('Basic sass', function(t) {
     t.plan(1);
 
-    return q.ninvoke(tmp, 'file')
+    return q.ninvoke(tmp, 'dir')
         .then(function(filePath) {
             return q.nfcall(webpack, {
                 entry: 'raw!' + pathToSassjsLoader + '!' + pathToEntrySass,
-                output: {path: filePath} 
+                output: {filename: path.basename(filePath), path: path.dirname(filePath)} 
             });
         })
         .then(function(stats) {
+            if (stats.hasErrors()) {
+                const err = new Error('Webpack compile error');
+                err.compilationErrors = stats.compilation.errors;
+                throw err;
+            }
+
+            if (stats.hasWarnings()) {
+                const err = new Error('Webpack compile warning');
+                err.compilationWarnings = stats.compilation.warnings;
+                throw err;
+            }
+
             const expectedContents = fs.readFileSync(path.join(__dirname, 'expected', 'basic.css'), 'utf8');
 
             t.is(stats.toString(), expectedContents);
         }).catch(function(err) {
-            t.fail(err);
+            const errorMessage = _([err, err.compilationErrors, err.compilationWarnings])
+                .compact()
+                .map(function(errPart) {
+                    return errPart.toString() 
+                })
+                .join('\n');
+
+            t.fail(errorMessage);
         });
 });
