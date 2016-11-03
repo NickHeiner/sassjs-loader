@@ -7,6 +7,7 @@ const test = require('ava'),
     fs = require('fs'),
     tmp = require('tmp'),
     _ = require('lodash'),
+    cssParse = require('css-parse'),
     
     packageJson = require('../package'),
     pathToSassjsLoader = path.join(__dirname, '..', packageJson.main),
@@ -14,6 +15,14 @@ const test = require('ava'),
 
 test('Basic sass', function(t) {
     t.plan(1);
+
+    function validateCssAst(cssString) {
+        try {
+            return cssParse(cssString.replace('\\n', '\n'));
+        } catch (e) {
+            t.fail('Could not parse css: "' + cssString + '" because of error "' + e + '"');
+        }
+    }
 
     return q.ninvoke(tmp, 'dir')
         .then(function(filePath) {
@@ -35,9 +44,14 @@ test('Basic sass', function(t) {
                 throw err;
             }
 
-            const expectedContents = fs.readFileSync(path.join(__dirname, 'expected', 'basic.css'), 'utf8');
+            const actual = stats.toJson().modules[0].source, 
+                actualCss = actual.slice(18, -3), // hackity hack hack
+                expectedCss = fs.readFileSync(path.join(__dirname, 'expected', 'basic.css'), 'utf8');
 
-            t.is(stats.toString(), expectedContents);
+            console.log(JSON.stringify(validateCssAst(actualCss), null, 2));
+            console.log(JSON.stringify(validateCssAst(expectedCss), null, 2));
+
+            t.deepEqual(validateCssAst(actualCss), validateCssAst(expectedCss));
         }).catch(function(err) {
             const errorMessage = _([err, err.compilationErrors, err.compilationWarnings])
                 .compact()

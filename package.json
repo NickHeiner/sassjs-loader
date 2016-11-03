@@ -23,7 +23,9 @@
   "homepage": "https://github.com/NickHeiner/sassjs-loader#readme",
   "devDependencies": {
     "ava": "^0.16.0",
+    "css-parse": "^2.0.0",
     "eslint": "^2.13.1",
+    "eslint-plugin-ava": "^2.5.0",
     "lodash": "^4.16.6",
     "q": "^1.4.1",
     "raw-loader": "^0.5.1",
