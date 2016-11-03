@@ -4,7 +4,7 @@
   "description": "A webpack loader for sass.js",
   "main": "index.js",
   "scripts": {
-    "test": "eslint *.js"
+    "test": "eslint *.js && ava"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,7 @@
   },
   "homepage": "https://github.com/NickHeiner/sassjs-loader#readme",
   "devDependencies": {
+    "ava": "^0.16.0",
     "eslint": "^3.9.1",
     "sass.js": "^0.9.13",
     "webpack": "^1.13.3"
