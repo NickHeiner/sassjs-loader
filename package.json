@@ -15,22 +15,6 @@
     "webpack",
     "sass"
   ],
-  "eslintConfig": {
-    "extends": "eslint:recommended",
-    "env": {
-      "node": true,
-      "es6": true
-    },
-    "rules": {
-      "max-len": [
-        "error",
-        120
-      ],
-      "no-console": [
-        "off"
-      ]
-    }
-  },
   "author": "Nick Heiner <nth23@cornell.edu>",
   "license": "MIT",
   "bugs": {
@@ -41,7 +25,9 @@
     "ava": "^0.16.0",
     "eslint": "^2.13.1",
     "q": "^1.4.1",
+    "raw-loader": "^0.5.1",
     "sass.js": "^0.9.13",
+    "tmp": "0.0.30",
     "webpack": "^1.13.3"
   }
 }

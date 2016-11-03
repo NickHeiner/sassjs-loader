@@ -1,0 +1,16 @@
+{
+    "extends": "eslint:recommended",
+    "env": {
+        "node": true,
+        "es6": true
+    },
+    "rules": {
+        "max-len": [
+            "error",
+            120
+        ],
+        "no-console": [
+            "off"
+        ]
+    }
+}
