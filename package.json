@@ -1,0 +1,42 @@
+{
+  "name": "sassjs-loader",
+  "version": "1.0.0",
+  "description": "A webpack loader for sass.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "eslint *.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NickHeiner/sassjs-loader.git"
+  },
+  "keywords": [
+    "sassjs",
+    "webpack",
+    "sass"
+  ],
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "node": true,
+      "es6": true
+    },
+    "rules": {
+      "max-len": [
+        "error",
+        120
+      ]
+    }
+  },
+  "author": "Nick Heiner <nth23@cornell.edu>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NickHeiner/sassjs-loader/issues"
+  },
+  "homepage": "https://github.com/NickHeiner/sassjs-loader#readme",
+  "devDependencies": {
+    "eslint": "^3.9.1",
+    "sass.js": "^0.9.13",
+    "webpack": "^1.13.3"
+  }
+}
