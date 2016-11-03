@@ -25,6 +25,9 @@
       "max-len": [
         "error",
         120
+      ],
+      "no-console": [
+        "off"
       ]
     }
   },
@@ -37,6 +40,7 @@
   "devDependencies": {
     "ava": "^0.16.0",
     "eslint": "^2.13.1",
+    "q": "^1.4.1",
     "sass.js": "^0.9.13",
     "webpack": "^1.13.3"
   }
