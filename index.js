@@ -1,19 +1,43 @@
 'use strict';
 
 var sassJs = require('sass.js'),
-    fs = require('fs'),
-    path = require('path');
+    q = require('q'),
+    qFs = require('q-io/fs'),
+    _ = require('lodash');
 
 module.exports = function(content) {
     var callback = this.async();
 
     sassJs.importer(function(request, done) {
-        console.log('importer', request);
-        var pathToRead = path.join(__dirname, 'test', 'fixtures', '_imported.scss');
-        done({
-            path: pathToRead,
-            content: fs.readFileSync(pathToRead, 'utf8')
-        });
+        // Adapted from
+        // eslint-disable-next-line max-len 
+        // https://github.com/amiramw/grunt-contrib-sassjs/blob/a65f869df967a4e417c4260fd93239e4f0bc55ee/tasks/sass.js#L11
+		if (request.path) {
+			done();
+		} else if (request.resolved) {
+			var realPath = request.resolved.replace(/^\/sass\//, ''),
+                pathVariations = sassJs.getPathVariations(realPath);
+
+            q.all(_.map(pathVariations, function(pathVariation) {
+                return qFs.read(pathVariation)
+                    .then(function(fileContents) {
+                        return {
+                            path: pathVariation,
+                            content: fileContents
+                        };
+                    })
+                    .catch(function(err) {
+                        if (err.code === 'ENOENT') {
+                            return null;
+                        }
+                        throw err;
+                    });    
+            })).then(function(files) {
+                done(_(files).compact().first());
+            });
+		} else {
+			done();
+		}
     });
 
     sassJs.compile(content, {inputPath: this.resourcePath}, function(result) {

@@ -9,6 +9,7 @@
             "error",
             120
         ],
+        "quotes": ["error", "single"],
         "no-console": [
             "off"
         ],
