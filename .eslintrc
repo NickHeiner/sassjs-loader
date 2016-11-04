@@ -1,0 +1,15 @@
+{
+    "extends": "eslint:recommended",
+    "env": {
+        "node": true
+    },
+    "rules": {
+        "max-len": [
+            "error",
+            120
+        ],
+        "no-console": [
+            "off"
+        ]
+    }
+}

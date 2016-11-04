@@ -4,7 +4,7 @@
   "description": "A webpack loader for sass.js",
   "main": "index.js",
   "scripts": {
-    "test": "eslint *.js && ava"
+    "test": "eslint *.js test/**.js && ava"
   },
   "repository": {
     "type": "git",
@@ -15,19 +15,6 @@
     "webpack",
     "sass"
   ],
-  "eslintConfig": {
-    "extends": "eslint:recommended",
-    "env": {
-      "node": true,
-      "es6": true
-    },
-    "rules": {
-      "max-len": [
-        "error",
-        120
-      ]
-    }
-  },
   "author": "Nick Heiner <nth23@cornell.edu>",
   "license": "MIT",
   "bugs": {
@@ -36,8 +23,15 @@
   "homepage": "https://github.com/NickHeiner/sassjs-loader#readme",
   "devDependencies": {
     "ava": "^0.16.0",
-    "eslint": "^3.9.1",
+    "css-parse": "^2.0.0",
+    "eslint": "^2.13.1",
+    "eslint-plugin-ava": "^2.5.0",
+    "lodash": "^4.16.6",
+    "q": "^1.4.1",
+    "raw-loader": "^0.5.1",
     "sass.js": "^0.9.13",
+    "tmp": "0.0.30",
+    "traverse": "^0.6.6",
     "webpack": "^1.13.3"
   }
 }
