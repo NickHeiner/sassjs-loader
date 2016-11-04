@@ -1,6 +1,6 @@
 'use strict';
 
-const test = require('ava'),
+var test = require('ava'),
     assertCssEqual = require('./utils/assert-css-equal');
 
 test('Basic sass', function(t) {
