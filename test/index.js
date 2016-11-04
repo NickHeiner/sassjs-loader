@@ -8,6 +8,7 @@ const test = require('ava'),
     tmp = require('tmp'),
     _ = require('lodash'),
     cssParse = require('css-parse'),
+    traverse = require('traverse'),
     
     packageJson = require('../package'),
     pathToSassjsLoader = path.join(__dirname, '..', packageJson.main),
@@ -18,7 +19,7 @@ test('Basic sass', function(t) {
 
     function validateCssAst(cssString) {
         try {
-            return cssParse(cssString.replace('\\n', '\n'));
+            return removePosition(cssParse(cssString.replace('\\n', '\n')));
         } catch (e) {
             t.fail('Could not parse css: "' + cssString + '" because of error "' + e + '"');
         }
@@ -48,9 +49,6 @@ test('Basic sass', function(t) {
                 actualCss = actual.slice(18, -3), // hackity hack hack
                 expectedCss = fs.readFileSync(path.join(__dirname, 'expected', 'basic.css'), 'utf8');
 
-            console.log(JSON.stringify(validateCssAst(actualCss), null, 2));
-            console.log(JSON.stringify(validateCssAst(expectedCss), null, 2));
-
             t.deepEqual(validateCssAst(actualCss), validateCssAst(expectedCss));
         }).catch(function(err) {
             const errorMessage = _([err, err.compilationErrors, err.compilationWarnings])
@@ -63,3 +61,11 @@ test('Basic sass', function(t) {
             t.fail(errorMessage);
         });
 });
+
+function removePosition(cssAst) {
+    return traverse(cssAst).map(function() {
+        if (this.key === 'position') {
+            this.remove(true);
+        }
+    });
+}
