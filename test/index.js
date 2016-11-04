@@ -9,8 +9,20 @@ test('Basic sass', function(t) {
     return assertCssEqual(t, 'basic');    
 });
 
-test('Imports', function(t) {
+test('Partial import', function(t) {
     t.plan(1);
 
     return assertCssEqual(t, 'import');    
+});
+
+test('Full file name import', function(t) {
+    t.plan(1);
+
+    return assertCssEqual(t, 'import', 'import-full-name');    
+});
+
+test('Import with .sass extension', function(t) {
+    t.plan(1);
+
+    return assertCssEqual(t, 'import', 'import-sass');    
 });

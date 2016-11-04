@@ -39,11 +39,12 @@ function getExpectationPath(fileName) {
     return path.join(__dirname, '..', 'expected', fileName + '.css');
 }
 
-function assertCssEqual(t, fileName) {
+function assertCssEqual(t, fileName, rawFixtureName) {
+    var fixtureName = rawFixtureName || fileName;
     return q.ninvoke(tmp, 'dir')
         .then(function(filePath) {
             return q.nfcall(webpack, {
-                entry: 'raw!' + pathToSassjsLoader + '!' + getFixturePath(fileName),
+                entry: 'raw!' + pathToSassjsLoader + '!' + getFixturePath(fixtureName),
                 output: {filename: path.basename(filePath), path: path.dirname(filePath)} 
             });
         })

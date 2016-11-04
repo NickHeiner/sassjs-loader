@@ -1,0 +1,5 @@
+@import "imported-sass";
+
+p {
+    margin: $imported;
+}
