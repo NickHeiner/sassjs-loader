@@ -4,7 +4,7 @@
   "description": "A webpack loader for sass.js",
   "main": "index.js",
   "scripts": {
-    "test": "eslint *.js test/**.js && ava"
+    "test": "eslint *.js test/**.js && ava test/*.js"
   },
   "repository": {
     "type": "git",
