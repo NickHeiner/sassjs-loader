@@ -3,6 +3,7 @@
 var sassJs = require('sass.js'),
     q = require('q'),
     qFs = require('q-io/fs'),
+    path = require('path'),
     _ = require('lodash');
 
 module.exports = function(content) {
@@ -15,14 +16,16 @@ module.exports = function(content) {
 		if (request.path) {
 			done();
 		} else if (request.resolved) {
-			var realPath = request.resolved.replace(/^\/sass\//, ''),
-                pathVariations = sassJs.getPathVariations(realPath);
+			var pathVariations = sassJs.getPathVariations(request.current);
 
             q.all(_.map(pathVariations, function(pathVariation) {
-                return qFs.read(pathVariation)
+                var resolvedDir = path.dirname(request.resolved), 
+                    fullPath = path.join(resolvedDir, pathVariation);
+                    
+                return qFs.read(fullPath)
                     .then(function(fileContents) {
                         return {
-                            path: pathVariation,
+                            path: fullPath,
                             content: fileContents
                         };
                     })
