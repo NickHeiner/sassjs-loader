@@ -1,5 +1,7 @@
 # sassjs-loader
 
+[![Build Status](https://travis-ci.org/NickHeiner/sassjs-loader.svg?branch=master)](https://travis-ci.org/NickHeiner/sassjs-loader)
+
 A webpack loader for [sass.js](https://www.npmjs.com/package/sass.js).
 
 ## Why would I want to use this?

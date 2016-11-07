@@ -41,8 +41,8 @@ function getExpectationPath(fileName) {
 
 function assertCssEqual(t, fileName, rawFixtureName) {
     var fixtureName = rawFixtureName || fileName;
-    return q.ninvoke(tmp, 'dir')
-        .then(function(filePath) {
+    return q.ninvoke(tmp, 'file')
+        .spread(function(filePath) {
             return q.nfcall(webpack, {
                 entry: 'raw!' + pathToSassjsLoader + '!' + getFixturePath(fixtureName),
                 output: {filename: path.basename(filePath), path: path.dirname(filePath)} 
