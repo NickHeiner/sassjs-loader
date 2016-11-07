@@ -16,7 +16,7 @@
     "sass"
   ],
   "author": "Nick Heiner <nth23@cornell.edu>",
-  "license": "CC1.0",
+  "license": "CC0-1.0",
   "bugs": {
     "url": "https://github.com/NickHeiner/sassjs-loader/issues"
   },
