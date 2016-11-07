@@ -13,7 +13,7 @@ $ npm install sassjs-loader webpack sass.js
 
 It's expected that you'll install the right versions of `webpack` and `sass.js`. Look in the `devDependencies` in [`package.json`](./package.json) to see what versions this tool was built with.
 
-For Node.js version compatibility, check [`.travis.yml`](./travis.yml#L2).
+For Node.js version compatibility, check [`.travis.yml`](./.travis.yml#L2).
 
 ## Usage
 
@@ -25,5 +25,5 @@ PRs welcome!
 
 `npm install` and `npm test` work the standard way.
 
-Please be mindful of maintaining the Node.js version compatibility specified in [`.travis.yml`](./travis.yml#L2). PRs will not be accepted if Travis tests are not passing.
+Please be mindful of maintaining the Node.js version compatibility specified in [`.travis.yml`](./.travis.yml#L2). PRs will not be accepted if Travis tests are not passing.
 
