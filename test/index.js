@@ -26,3 +26,9 @@ test('Import with .sass extension', function(t) {
 
     return assertCssEqual(t, 'import', 'import-sass');    
 });
+
+test('Directory in import statement', function(t) {
+    t.plan(1);
+
+    return assertCssEqual(t, 'import', 'import-from-dir');    
+});
