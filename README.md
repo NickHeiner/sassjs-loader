@@ -8,7 +8,7 @@ Honestly, you probably don't, and should use [sass-loader](https://github.com/jt
 ## Installation
 
 ```
-$ npm install sassjs-loader webpack sass.js
+$ npm install --save-dev sassjs-loader webpack sass.js
 ```
 
 It's expected that you'll install the right versions of `webpack` and `sass.js`. Look in the `devDependencies` in [`package.json`](./package.json) to see what versions this tool was built with.
