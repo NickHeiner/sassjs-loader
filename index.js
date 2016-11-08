@@ -5,7 +5,8 @@ var sassJs = require('sass.js'),
     qFs = require('q-io/fs'),
     _ = require('lodash'),
     
-    getResolvedPath = require('./lib/get-resolved-path');
+    getResolvedPath = require('./lib/get-resolved-path'),
+    getPathVariations = require('./lib/get-path-variations');
 
 module.exports = function(content) {
     var callback = this.async();
@@ -17,7 +18,7 @@ module.exports = function(content) {
 		if (request.path) {
 			done();
 		} else if (request.resolved) {
-			var pathVariations = sassJs.getPathVariations(getResolvedPath(request));
+			var pathVariations = getPathVariations(getResolvedPath(request));
 
             q.all(_.map(pathVariations, function(pathVariation) {
                 return qFs.read(pathVariation)
