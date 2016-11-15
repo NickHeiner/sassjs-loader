@@ -14,6 +14,7 @@ var cssParse = require('css-parse'),
     _ = require('lodash');
 
 module.exports = assertCssEqual;
+module.exports.assertCssEqualFile = assertCssEqualFile;
 
 function validateCssAst(t, cssString) {
     try {
@@ -36,15 +37,36 @@ function getFixturePath(fileName) {
 }
 
 function getExpectationPath(fileName) {
-    return path.join(__dirname, '..', 'expected', fileName + '.css');
+    return getExpectationPathNoExt(fileName) + '.css';
 }
 
-function assertCssEqual(t, fileName, rawFixtureName) {
-    var fixtureName = rawFixtureName || fileName;
+function getExpectationPathNoExt(fileName) {
+    return path.join(__dirname, '..', 'expected', fileName);
+}
+
+function assertCssEqual(t, expectedFileName, rawFixtureName) {
+    var fixtureName = rawFixtureName || expectedFileName;
+    return generateCss(t, fixtureName).then(function(actualCss) {
+        // TODO: use async file read
+        var expectedCss = fs.readFileSync(getExpectationPath(expectedFileName), 'utf8');
+
+        t.deepEqual(validateCssAst(t, actualCss), validateCssAst(t, expectedCss));
+    });
+}
+
+function assertCssEqualFile(t, fixtureName, expectedFileName) {
+    return generateCss(t, fixtureName).then(function(actualCss) {
+        var expectedCss = fs.readFileSync(getExpectationPathNoExt(expectedFileName), 'utf8');
+
+        t.deepEqual(actualCss, expectedCss);
+    });
+}
+
+function generateCss(t, fileName) {
     return q.ninvoke(tmp, 'file')
         .spread(function(filePath) {
             return q.nfcall(webpack, {
-                entry: 'raw!' + pathToSassjsLoader + '!' + getFixturePath(fixtureName),
+                entry: 'raw!' + pathToSassjsLoader + '!' + getFixturePath(fileName),
                 output: {filename: path.basename(filePath), path: path.dirname(filePath)} 
             });
         })
@@ -62,12 +84,9 @@ function assertCssEqual(t, fileName, rawFixtureName) {
                 throw err;
             }
 
+            var actual = stats.toJson().modules[0].source;
 
-            var actual = stats.toJson().modules[0].source, 
-                actualCss = actual.slice(18, -3), // hackity hack hack
-                expectedCss = fs.readFileSync(getExpectationPath(fileName), 'utf8');
-
-            t.deepEqual(validateCssAst(t, actualCss), validateCssAst(t, expectedCss));
+            return actual.slice(18, -3); // hackity hack hack
         }).catch(function(err) {
             var errorMessage = _([err, err.compilationErrors, err.compilationWarnings])
                 .compact()

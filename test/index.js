@@ -36,5 +36,5 @@ test('Directory in import statement', function(t) {
 test('Import from node_modules', function(t) {
     t.plan(1);
 
-    return assertCssEqual(t, 'import', 'import-from-node-modules');    
+    return assertCssEqual.assertCssEqualFile(t, 'import-from-node-modules', 'node-modules-import.css.txt');    
 });

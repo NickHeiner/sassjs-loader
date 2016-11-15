@@ -33,8 +33,6 @@ module.exports = function(content) {
                 );
             }
 
-            console.log(pathVariations, request, rootNodeModulesDir, ostensibleNodeModuleName);
-
             q.all(_.map(pathVariations, function(pathVariation) {
                 return qFs.read(pathVariation)
                     .then(function(fileContents) {
