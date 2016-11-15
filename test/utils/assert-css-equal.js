@@ -2,6 +2,7 @@
 
 var cssParse = require('css-parse'),
     traverse = require('traverse'),
+    qFs = require('q-io/fs'),
 
     path = require('path'),
     packageJson = require('../../package'),
@@ -9,7 +10,6 @@ var cssParse = require('css-parse'),
 
     webpack = require('webpack'),
     q = require('q'),
-    fs = require('fs'),
     tmp = require('tmp'),
     _ = require('lodash');
 
@@ -46,17 +46,24 @@ function getExpectationPathNoExt(fileName) {
 
 function assertCssEqual(t, expectedFileName, rawFixtureName) {
     var fixtureName = rawFixtureName || expectedFileName;
-    return generateCss(t, fixtureName).then(function(actualCss) {
-        // TODO: use async file read
-        var expectedCss = fs.readFileSync(getExpectationPath(expectedFileName), 'utf8');
+    return Promise.all([
+        generateCss(t, fixtureName),
+        qFs.read(getExpectationPath(expectedFileName))
+    ]).then(function(css) {
+        var actualCss = css[0],
+            expectedCss = css[1];
 
         t.deepEqual(validateCssAst(t, actualCss), validateCssAst(t, expectedCss));
     });
 }
 
 function assertCssEqualFile(t, fixtureName, expectedFileName) {
-    return generateCss(t, fixtureName).then(function(actualCss) {
-        var expectedCss = fs.readFileSync(getExpectationPathNoExt(expectedFileName), 'utf8');
+    return Promise.all([
+        generateCss(t, fixtureName),
+        qFs.read(getExpectationPathNoExt(expectedFileName))
+    ]).then(function(css) {
+        var actualCss = css[0],
+            expectedCss = css[1];
 
         t.deepEqual(actualCss, expectedCss);
     });

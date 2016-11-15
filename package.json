@@ -32,6 +32,7 @@
     "css-parse": "^2.0.0",
     "eslint": "^2.13.1",
     "eslint-plugin-ava": "^2.5.0",
+    "q-io": "^1.13.2",
     "raw-loader": "^0.5.1",
     "sass.js": "^0.9.13",
     "tmp": "0.0.30",
