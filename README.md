@@ -1,7 +1,5 @@
 # sassjs-loader [![Build Status](https://travis-ci.org/NickHeiner/sassjs-loader.svg?branch=master)](https://travis-ci.org/NickHeiner/sassjs-loader)
 
-
-
 A webpack loader for [sass.js](https://www.npmjs.com/package/sass.js).
 
 ## Why would I want to use this?
@@ -28,4 +26,3 @@ PRs welcome!
 `npm install` and `npm test` work the standard way.
 
 Please be mindful of maintaining the Node.js version compatibility specified in [`.travis.yml`](./.travis.yml#L2). PRs will not be accepted if Travis tests are not passing.
-

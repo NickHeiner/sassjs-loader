@@ -3,7 +3,12 @@
 var sassJs = require('sass.js'),
     q = require('q'),
     qFs = require('q-io/fs'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    path = require('path'),
+    
+    getNodeModuleDir = require('./lib/get-node-module-dir'),
+    getResolvedPath = require('./lib/get-resolved-path'),
+    getPathVariations = require('./lib/get-path-variations');
 
 module.exports = function(content) {
     var callback = this.async();
@@ -15,8 +20,18 @@ module.exports = function(content) {
 		if (request.path) {
 			done();
 		} else if (request.resolved) {
-			var realPath = request.resolved.replace(/^\/sass\//, ''),
-                pathVariations = sassJs.getPathVariations(realPath);
+			var resolvedPath = getResolvedPath(request),
+                pathVariations = getPathVariations(resolvedPath),
+            
+                ostensibleNodeModuleName = _.first(request.current.split(path.sep)),
+                rootNodeModulesDir = getRootNodeModulesDir(ostensibleNodeModuleName);
+
+            if (rootNodeModulesDir) {
+                Array.prototype.push.apply(
+                    pathVariations, 
+                    getPathVariations(path.join(rootNodeModulesDir, request.current))
+                );
+            }
 
             q.all(_.map(pathVariations, function(pathVariation) {
                 return qFs.read(pathVariation)
@@ -27,13 +42,22 @@ module.exports = function(content) {
                         };
                     })
                     .catch(function(err) {
-                        if (err.code === 'ENOENT') {
+                        /**
+                         * ENOENT happens when the file does not exist. That is expected,
+                         * because we only expect one of the many path variations to exist.
+                         * EISDIR happens when a path variation is also the name of a directory.
+                         * This also does not need to be a problem if there's a different path
+                         * variation is that is a valid file name.
+                         */
+                        if (err.code === 'ENOENT' || err.code === 'EISDIR') {
                             return null;
                         }
                         throw err;
                     });    
             })).then(function(files) {
                 done(_(files).compact().first());
+            }).catch(function(err) {
+                done({error: JSON.stringify(err)});
             });
 		} else {
 			done();
@@ -48,3 +72,14 @@ module.exports = function(content) {
         }
     });
 };
+
+function getRootNodeModulesDir(name) {
+    try {
+        return getNodeModuleDir(require.resolve(name));
+    } catch (e) {
+        if (e.code === 'MODULE_NOT_FOUND') {
+            return null;
+        }
+        throw e;
+    }
+}

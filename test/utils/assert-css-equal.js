@@ -2,6 +2,7 @@
 
 var cssParse = require('css-parse'),
     traverse = require('traverse'),
+    qFs = require('q-io/fs'),
 
     path = require('path'),
     packageJson = require('../../package'),
@@ -9,11 +10,11 @@ var cssParse = require('css-parse'),
 
     webpack = require('webpack'),
     q = require('q'),
-    fs = require('fs'),
     tmp = require('tmp'),
     _ = require('lodash');
 
 module.exports = assertCssEqual;
+module.exports.assertCssEqualFile = assertCssEqualFile;
 
 function validateCssAst(t, cssString) {
     try {
@@ -36,15 +37,43 @@ function getFixturePath(fileName) {
 }
 
 function getExpectationPath(fileName) {
-    return path.join(__dirname, '..', 'expected', fileName + '.css');
+    return getExpectationPathNoExt(fileName) + '.css';
 }
 
-function assertCssEqual(t, fileName, rawFixtureName) {
-    var fixtureName = rawFixtureName || fileName;
+function getExpectationPathNoExt(fileName) {
+    return path.join(__dirname, '..', 'expected', fileName);
+}
+
+function assertCssEqual(t, expectedFileName, rawFixtureName) {
+    var fixtureName = rawFixtureName || expectedFileName;
+    return Promise.all([
+        generateCss(t, fixtureName),
+        qFs.read(getExpectationPath(expectedFileName))
+    ]).then(function(css) {
+        var actualCss = css[0],
+            expectedCss = css[1];
+
+        t.deepEqual(validateCssAst(t, actualCss), validateCssAst(t, expectedCss));
+    });
+}
+
+function assertCssEqualFile(t, fixtureName, expectedFileName) {
+    return Promise.all([
+        generateCss(t, fixtureName),
+        qFs.read(getExpectationPathNoExt(expectedFileName))
+    ]).then(function(css) {
+        var actualCss = css[0],
+            expectedCss = css[1];
+
+        t.deepEqual(actualCss, expectedCss);
+    });
+}
+
+function generateCss(t, fileName) {
     return q.ninvoke(tmp, 'file')
         .spread(function(filePath) {
             return q.nfcall(webpack, {
-                entry: 'raw!' + pathToSassjsLoader + '!' + getFixturePath(fixtureName),
+                entry: 'raw!' + pathToSassjsLoader + '!' + getFixturePath(fileName),
                 output: {filename: path.basename(filePath), path: path.dirname(filePath)} 
             });
         })
@@ -62,12 +91,9 @@ function assertCssEqual(t, fileName, rawFixtureName) {
                 throw err;
             }
 
+            var actual = stats.toJson().modules[0].source;
 
-            var actual = stats.toJson().modules[0].source, 
-                actualCss = actual.slice(18, -3), // hackity hack hack
-                expectedCss = fs.readFileSync(getExpectationPath(fileName), 'utf8');
-
-            t.deepEqual(validateCssAst(t, actualCss), validateCssAst(t, expectedCss));
+            return actual.slice(18, -3); // hackity hack hack
         }).catch(function(err) {
             var errorMessage = _([err, err.compilationErrors, err.compilationWarnings])
                 .compact()

@@ -1,0 +1,5 @@
+@import "dir/imported-from-dir";
+
+p {
+    margin: $imported;
+}
