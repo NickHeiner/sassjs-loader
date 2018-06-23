@@ -70,7 +70,7 @@ module.exports = function (content) {
         if (!result.status) {
             callback(null, result.text);
         } else {
-            callback(result);
+            callback(new Error(result.formatted));
         }
     });
 };
