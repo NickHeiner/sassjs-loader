@@ -35,9 +35,9 @@ module.exports = function (content) {
             }
 
             q.all(_.map(pathVariations, function (pathVariation) {
-                self.addDependency(pathVariation);
                 return readFile(pathVariation)
                     .then(function (fileContents) {
+                        self.addDependency(pathVariation);
                         return {
                             path: pathVariation,
                             content: fileContents
