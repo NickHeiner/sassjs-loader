@@ -1,8 +1,14 @@
 {
   "name": "sassjs-loader",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A webpack loader for sass.js",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "lib",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "test": "eslint *.js lib/**/*.js test/*.js test/**/*.js --fix && ava test/*.js test/lib/**.js"
   },
