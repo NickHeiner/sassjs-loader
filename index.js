@@ -4,13 +4,13 @@ var sassJs = require('sass.js'),
     q = require('q'),
     _ = require('lodash'),
     path = require('path'),
+    fs = require('fs'),
 
     getNodeModuleDir = require('./lib/get-node-module-dir'),
     getResolvedPath = require('./lib/get-resolved-path'),
-    getPathVariations = require('./lib/get-path-variations'),
-    readFile = require('./lib/read-file');
+    getPathVariations = require('./lib/get-path-variations');
 
-module.exports = function (content) {
+module.exports = function(content) {
     var callback = this.async();
     var self = this;
 
@@ -35,7 +35,7 @@ module.exports = function (content) {
             }
 
             q.all(_.map(pathVariations, function (pathVariation) {
-                return readFile(pathVariation)
+                return q.nfcall(fs.readFile, pathVariation, 'utf-8')
                     .then(function (fileContents) {
                         self.addDependency(pathVariation);
                         return {
