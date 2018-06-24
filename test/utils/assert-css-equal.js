@@ -2,7 +2,7 @@
 
 var cssParse = require('css-parse'),
     traverse = require('traverse'),
-    qFs = require('q-io/fs'),
+    fs = require('fs'),
 
     path = require('path'),
     packageJson = require('../../package'),
@@ -25,7 +25,7 @@ function validateCssAst(t, cssString) {
 }
 
 function removePosition(cssAst) {
-    return traverse(cssAst).map(function() {
+    return traverse(cssAst).map(function () {
         if (this.key === 'position') {
             this.remove(true);
         }
@@ -48,8 +48,8 @@ function assertCssEqual(t, expectedFileName, rawFixtureName) {
     var fixtureName = rawFixtureName || expectedFileName;
     return Promise.all([
         generateCss(t, fixtureName),
-        qFs.read(getExpectationPath(expectedFileName))
-    ]).then(function(css) {
+        q.nfcall(fs.readFile, getExpectationPath(expectedFileName), 'utf-8')
+    ]).then(function (css) {
         var actualCss = css[0],
             expectedCss = css[1];
 
@@ -60,8 +60,8 @@ function assertCssEqual(t, expectedFileName, rawFixtureName) {
 function assertCssEqualFile(t, fixtureName, expectedFileName) {
     return Promise.all([
         generateCss(t, fixtureName),
-        qFs.read(getExpectationPathNoExt(expectedFileName))
-    ]).then(function(css) {
+        q.nfcall(fs.readFile, getExpectationPathNoExt(expectedFileName), 'utf-8')
+    ]).then(function (css) {
         var actualCss = css[0],
             expectedCss = css[1];
 
@@ -71,13 +71,14 @@ function assertCssEqualFile(t, fixtureName, expectedFileName) {
 
 function generateCss(t, fileName) {
     return q.ninvoke(tmp, 'file')
-        .spread(function(filePath) {
+        .spread(function (filePath) {
             return q.nfcall(webpack, {
-                entry: 'raw!' + pathToSassjsLoader + '!' + getFixturePath(fileName),
-                output: {filename: path.basename(filePath), path: path.dirname(filePath)} 
+                entry: 'raw-loader!' + pathToSassjsLoader + '!' + getFixturePath(fileName),
+                output: { filename: path.basename(filePath), path: path.dirname(filePath) },
+                mode: 'production'
             });
         })
-        .then(function(stats) {
+        .then(function (stats) {
             var err;
             if (stats.hasErrors()) {
                 err = new Error('Webpack compile error');
@@ -94,11 +95,11 @@ function generateCss(t, fileName) {
             var actual = stats.toJson().modules[0].source;
 
             return actual.slice(18, -3); // hackity hack hack
-        }).catch(function(err) {
+        }).catch(function (err) {
             var errorMessage = _([err, err.compilationErrors, err.compilationWarnings])
                 .compact()
-                .map(function(errPart) {
-                    return errPart.toString() 
+                .map(function (errPart) {
+                    return errPart.toString()
                 })
                 .join('\n');
 
