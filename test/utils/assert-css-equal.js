@@ -74,7 +74,7 @@ function generateCss(t, fileName) {
         .spread(function(filePath) {
             return q.nfcall(webpack, {
                 entry: 'raw-loader!' + pathToSassjsLoader + '!' + getFixturePath(fileName),
-                output: { filename: path.basename(filePath), path: path.dirname(filePath) },
+                output: {filename: path.basename(filePath), path: path.dirname(filePath)},
                 mode: 'production'
             });
         })
