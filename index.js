@@ -14,7 +14,7 @@ module.exports = function(content) {
     var callback = this.async();
     var self = this;
 
-    sassJs.importer(function (request, done) {
+    sassJs.importer(function(request, done) {
         // Adapted from
         // eslint-disable-next-line max-len 
         // https://github.com/amiramw/grunt-contrib-sassjs/blob/a65f869df967a4e417c4260fd93239e4f0bc55ee/tasks/sass.js#L11
@@ -34,16 +34,16 @@ module.exports = function(content) {
                 );
             }
 
-            q.all(_.map(pathVariations, function (pathVariation) {
+            q.all(_.map(pathVariations, function(pathVariation) {
                 return q.nfcall(fs.readFile, pathVariation, 'utf-8')
-                    .then(function (fileContents) {
+                    .then(function(fileContents) {
                         self.addDependency(pathVariation);
                         return {
                             path: pathVariation,
                             content: fileContents
                         };
                     })
-                    .catch(function (err) {
+                    .catch(function(err) {
                         /**
                          * ENOENT happens when the file does not exist. That is expected,
                          * because we only expect one of the many path variations to exist.
@@ -56,9 +56,9 @@ module.exports = function(content) {
                         }
                         throw err;
                     });
-            })).then(function (files) {
+            })).then(function(files) {
                 done(_(files).compact().first());
-            }).catch(function (err) {
+            }).catch(function(err) {
                 done({ error: JSON.stringify(err) });
             });
         } else {
@@ -66,7 +66,7 @@ module.exports = function(content) {
         }
     });
 
-    sassJs.compile(content, { inputPath: this.resourcePath }, function (result) {
+    sassJs.compile(content, { inputPath: this.resourcePath }, function(result) {
         if (!result.status) {
             callback(null, result.text);
         } else {
