@@ -59,14 +59,14 @@ module.exports = function(content) {
             })).then(function(files) {
                 done(_(files).compact().first());
             }).catch(function(err) {
-                done({ error: JSON.stringify(err) });
+                done({error: JSON.stringify(err)});
             });
         } else {
             done();
         }
     });
 
-    sassJs.compile(content, { inputPath: this.resourcePath }, function(result) {
+    sassJs.compile(content, {inputPath: this.resourcePath}, function(result) {
         if (!result.status) {
             callback(null, result.text);
         } else {
