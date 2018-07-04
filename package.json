@@ -38,7 +38,7 @@
     "eslint": "^2.13.1",
     "eslint-plugin-ava": "^2.5.0",
     "raw-loader": "^0.5.1",
-    "sass.js": "^0.9.13",
+    "sass.js": "^0.10.9",
     "tmp": "0.0.30",
     "traverse": "^0.6.6",
     "webpack": "^4.12.1"

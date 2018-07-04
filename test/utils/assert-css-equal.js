@@ -64,7 +64,7 @@ function assertCssEqualFile(t, fixtureName, expectedFileName) {
     ]).then(function (css) {
         var actualCss = css[0],
             expectedCss = css[1];
-
+            
         t.deepEqual(actualCss, expectedCss);
     });
 }
