@@ -1,8 +1,14 @@
 {
   "name": "sassjs-loader",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A webpack loader for sass.js",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "lib",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "test": "eslint *.js lib/**/*.js test/*.js test/**/*.js --fix && ava test/*.js test/lib/**.js"
   },
@@ -23,8 +29,7 @@
   "homepage": "https://github.com/NickHeiner/sassjs-loader#readme",
   "dependencies": {
     "lodash": "^4.16.6",
-    "q": "^1.4.1",
-    "q-io": "^1.13.2"
+    "q": "^1.4.1"
   },
   "devDependencies": {
     "ava": "^0.16.0",
@@ -32,11 +37,10 @@
     "css-parse": "^2.0.0",
     "eslint": "^2.13.1",
     "eslint-plugin-ava": "^2.5.0",
-    "q-io": "^1.13.2",
     "raw-loader": "^0.5.1",
-    "sass.js": "^0.9.13",
+    "sass.js": "^0.10.9",
     "tmp": "0.0.30",
     "traverse": "^0.6.6",
-    "webpack": "^1.13.3"
+    "webpack": "^4.12.1"
   }
 }

@@ -2,7 +2,7 @@
 
 var cssParse = require('css-parse'),
     traverse = require('traverse'),
-    qFs = require('q-io/fs'),
+    fs = require('fs'),
 
     path = require('path'),
     packageJson = require('../../package'),
@@ -48,7 +48,7 @@ function assertCssEqual(t, expectedFileName, rawFixtureName) {
     var fixtureName = rawFixtureName || expectedFileName;
     return Promise.all([
         generateCss(t, fixtureName),
-        qFs.read(getExpectationPath(expectedFileName))
+        q.nfcall(fs.readFile, getExpectationPath(expectedFileName), 'utf-8')
     ]).then(function(css) {
         var actualCss = css[0],
             expectedCss = css[1];
@@ -60,7 +60,7 @@ function assertCssEqual(t, expectedFileName, rawFixtureName) {
 function assertCssEqualFile(t, fixtureName, expectedFileName) {
     return Promise.all([
         generateCss(t, fixtureName),
-        qFs.read(getExpectationPathNoExt(expectedFileName))
+        q.nfcall(fs.readFile, getExpectationPathNoExt(expectedFileName), 'utf-8')
     ]).then(function(css) {
         var actualCss = css[0],
             expectedCss = css[1];
@@ -73,8 +73,9 @@ function generateCss(t, fileName) {
     return q.ninvoke(tmp, 'file')
         .spread(function(filePath) {
             return q.nfcall(webpack, {
-                entry: 'raw!' + pathToSassjsLoader + '!' + getFixturePath(fileName),
-                output: {filename: path.basename(filePath), path: path.dirname(filePath)} 
+                entry: 'raw-loader!' + pathToSassjsLoader + '!' + getFixturePath(fileName),
+                output: {filename: path.basename(filePath), path: path.dirname(filePath)},
+                mode: 'production'
             });
         })
         .then(function(stats) {
@@ -98,7 +99,7 @@ function generateCss(t, fileName) {
             var errorMessage = _([err, err.compilationErrors, err.compilationWarnings])
                 .compact()
                 .map(function(errPart) {
-                    return errPart.toString() 
+                    return errPart.toString()
                 })
                 .join('\n');
 
