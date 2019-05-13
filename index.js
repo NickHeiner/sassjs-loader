@@ -5,6 +5,7 @@ var sassJs = require('sass.js'),
     _ = require('lodash'),
     path = require('path'),
     fs = require('fs'),
+    utils = require('loader-utils'),
 
     getNodeModuleDir = require('./lib/get-node-module-dir'),
     getResolvedPath = require('./lib/get-resolved-path'),
@@ -16,8 +17,35 @@ module.exports = function(content) {
 
     sassJs.importer(function(request, done) {
         // Adapted from
-        // eslint-disable-next-line max-len 
+        // eslint-disable-next-line max-len
         // https://github.com/amiramw/grunt-contrib-sassjs/blob/a65f869df967a4e417c4260fd93239e4f0bc55ee/tasks/sass.js#L11
+
+        var options = utils.getOptions(self);
+
+        if (options && options.importer) {
+            if (!(options.importer instanceof Array)) {
+                options.importer = [ options.importer ];
+            }
+
+            options.importer.some((importer) => {
+                var imported = importer(request.current, request.previous);
+
+                if (imported.file !== null) {
+                    request.current = imported.file;
+                    request.resolved = imported.file;
+
+                    return true;
+                }
+
+                if (imported.contents !== null) {
+                    request.path = request.resolved;
+                    request.content = imported.contents;
+
+                    return true;
+                }
+            })
+        }
+
         if (request.path) {
             done();
         } else if (request.resolved) {
